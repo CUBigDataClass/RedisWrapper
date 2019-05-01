@@ -5,7 +5,7 @@ import json
 
 class RedisWrapper():
     def __init__(self):
-        self.redicclient = redis.StrictRedis(host='35.236.16.13', port=6379, db=0)
+        self.redicclient = redis.StrictRedis(host='35.236.16.13', port=6379, db=0, decode_responses=True)
         self.mng = MongoWrapper()
 
     def redis_update_json(self, api_string, key):
