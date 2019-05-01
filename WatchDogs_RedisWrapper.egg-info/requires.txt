@@ -1,0 +1,4 @@
+pymongo
+textblob
+pandas
+python-logstash
