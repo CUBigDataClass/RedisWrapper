@@ -1,4 +1,4 @@
-from redis_wrapper import RedisWrapper
+from WatchDogs_RedisWrapper.redis_wrapper import RedisWrapper
 import unittest
 class RedisWrapperTests(unittest.TestCase):
     def test_push(self):
