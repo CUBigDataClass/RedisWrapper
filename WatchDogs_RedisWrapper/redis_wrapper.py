@@ -1,5 +1,6 @@
 import redis
 from WatchDogs_MongoWrapper import MongoWrapper
+import json
 
 class RedisWrapper():
     def __init__(self):
@@ -22,25 +23,35 @@ class RedisWrapper():
                 print('Something is terribly wrong')
                 raise
 
-    def redis_insert_tweet(self, api_string, key, tweet):
-        try:
-            lat_long_list = tweet['Geo']['coordinates']
-        except:
-            lat_long_list = ['None', 'None']
-        sentiment_polarity = tweet["Sentiment_Polarity"]
-        full_text = tweet["Text"]
-        root_json_path = """{"Latitude": {lat}, "Longitude": {long},
-             "Sentiment_Polarity": {sentiment_polarity}, "Tweet_Text": {full_text}
-             }""".format(lat=lat_long_list[0], long=lat_long_list[1], sentiment_polarity=sentiment_polarity,
-                         full_text = full_text)
-
-        if api_string == 'get_tweets_with_lat_long/':
+    def redis_insert_tweet(self, key, tweets):
+        """
+        Either insert a single tweet or multiple tweets and this def will update the redis cache accordingly
+        :param key:
+        :param tweets:
+        :return:
+        """
+        for tweet in tweets:
             try:
-                self.redicclient.execute_command('JSON.ARRAPPEND', api_string+key, '.', root_json_path)
+                lat_long_list = tweet['Geo']['coordinates']
+                has_lat_long = True
             except:
-                print('Something is terribly wrong')
-                raise
-        elif api_string == 'get_polarity_tweets_of_stock/':
+                has_lat_long = False
+                lat_long_list = ['None', 'None']
+            sentiment_polarity = tweet["Sentiment_Polarity"]
+            full_text = tweet["Text"]
+            root_json_path = {}
+            root_json_path["Latitude"] = lat_long_list[0]
+            root_json_path["Longitude"] = lat_long_list[1]
+            root_json_path["Tweet_Text"] = full_text
+            root_json_path["Sentiment_Polarity"] = sentiment_polarity
+            if has_lat_long:
+                api_string = 'get_tweets_with_lat_long/'
+                try:
+                    self.redicclient.execute_command('JSON.ARRAPPEND', api_string+key, '.', json.dumps(root_json_path))
+                except:
+                    print('Something is terribly wrong')
+                    raise
+            api_string = 'get_polarity_tweets_of_stock/'
             try:
                 if sentiment_polarity == -1:
                     root_path = '.Negative_Tweets'
@@ -48,7 +59,7 @@ class RedisWrapper():
                     root_path = '.Neutral_Tweets'
                 elif sentiment_polarity == 1:
                     root_path = '.Positive_Tweets'
-                self.redicclient.execute_command('JSON.ARRAPPEND', api_string + key, root_path, root_json_path)
+                self.redicclient.execute_command('JSON.ARRAPPEND', api_string + key, root_path, json.dumps(root_json_path))
             except:
                 print('Something is terribly wrong')
                 raise
