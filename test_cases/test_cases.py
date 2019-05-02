@@ -1,5 +1,6 @@
 from WatchDogs_RedisWrapper.redis_wrapper import RedisWrapper
 import unittest
+
 class RedisWrapperTests(unittest.TestCase):
     def test_push(self):
         redis_connection = RedisWrapper()
@@ -26,8 +27,7 @@ class RedisWrapperTests(unittest.TestCase):
         api_string = 'get_polarity_tweets_of_stock/'
         key = 'Facebook'
         json_string = redis_connection.redis_get_json(api_string, key)
-        decoded_string = json_string.decode("utf-8")
-        print(decoded_string)
+        print(json_string)
 
 
 if __name__ == '__main__':
