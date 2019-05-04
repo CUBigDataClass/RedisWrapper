@@ -7,7 +7,8 @@ install_requires=[
     'pymongo',
     'textblob',
     'pandas',
-    'python-logstash'
+    'python-logstash',
+    'redis'
     ],
  version='2.0',
 
