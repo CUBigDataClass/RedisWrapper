@@ -1,6 +1,7 @@
 import redis
 from WatchDogs_MongoWrapper import MongoWrapper
 import json
+import traceback
 
 class RedisWrapper():
     def __init__(self):
@@ -16,15 +17,18 @@ class RedisWrapper():
                 json_data = self.mng.get_tweets_with_lat_long(key)
                 self.redicclient.execute_command('JSON.SET', api_string+key, '.', json_data)
             except:
-                print('Something is terribly wrong')
-                raise
+                print(traceback.format_exc())
+                test_logger = self.get_logger('Redis Wrapper')
+                test_logger.error(traceback.format_exc())
+
         elif api_string == 'get_polarity_tweets_of_stock/':
             try:
                 json_data = self.mng.get_polarity_tweets_of_stock(key)
                 self.redicclient.execute_command('JSON.SET', api_string + key, '.', json_data)
             except:
-                print('Something is terribly wrong')
-                raise
+                print(traceback.format_exc())
+                test_logger = self.get_logger('Redis Wrapper')
+                test_logger.error(traceback.format_exc())
 
     def redis_insert_tweet(self, key, tweet):
         """
@@ -51,8 +55,9 @@ class RedisWrapper():
             try:
                 self.redicclient.execute_command('JSON.ARRAPPEND', api_string+key, '.', json.dumps(root_json_path))
             except:
-                print('Something is terribly wrong')
-                raise
+                print(traceback.format_exc())
+                test_logger = self.get_logger('Redis Wrapper')
+                test_logger.error(traceback.format_exc())
         api_string = 'get_polarity_tweets_of_stock/'
         try:
             if sentiment_polarity == -1:
@@ -63,8 +68,9 @@ class RedisWrapper():
                 root_path = '.Positive_Tweets'
             self.redicclient.execute_command('JSON.ARRAPPEND', api_string + key, root_path, json.dumps(root_json_path))
         except:
-            print('Something is terribly wrong')
-            raise
+            print(traceback.format_exc())
+            test_logger = self.get_logger('Redis Wrapper')
+            test_logger.error(traceback.format_exc())
 
     def redis_get_json(self, api_string, key):
         return self.redicclient.execute_command('JSON.GET', api_string+key)
