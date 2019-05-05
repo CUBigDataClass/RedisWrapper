@@ -40,7 +40,7 @@ class RedisWrapper():
             except:
                 has_lat_long = False
                 lat_long_list = ['None', 'None']
-            sentiment_polarity = tweet["Sentiment_Polarity"]
+            sentiment_polarity = int(tweet["Sentiment_Polarity"])
             full_text = tweet["Text"]
             root_json_path = {}
             root_json_path["Latitude"] = lat_long_list[0]
