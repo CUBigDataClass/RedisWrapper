@@ -7,6 +7,9 @@ class RedisWrapper():
         self.redicclient = redis.StrictRedis(host='35.236.16.13', port=6379, db=0, decode_responses=True)
         self.mng = MongoWrapper()
 
+    def get_logger(self, logger_name):
+        return self.mng.get_logger(logger_name)
+
     def redis_update_json(self, api_string, key):
         if api_string == 'get_tweets_with_lat_long/':
             try:
