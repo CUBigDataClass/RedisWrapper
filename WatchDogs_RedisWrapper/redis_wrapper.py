@@ -52,25 +52,16 @@ class RedisWrapper():
         root_json_path["Sentiment_Polarity"] = sentiment_polarity
         if has_lat_long:
             api_string = 'get_tweets_with_lat_long/'
-            try:
-                self.redicclient.execute_command('JSON.ARRAPPEND', api_string+key, '.', json.dumps(root_json_path))
-            except:
-                print(traceback.format_exc())
-                test_logger = self.get_logger('Redis Wrapper')
-                test_logger.error(traceback.format_exc())
+            self.redicclient.execute_command('JSON.ARRAPPEND', api_string+key, '.', json.dumps(root_json_path))
+
         api_string = 'get_polarity_tweets_of_stock/'
-        try:
-            if sentiment_polarity == -1:
-                root_path = '.Negative_Tweets'
-            elif sentiment_polarity == 0:
-                root_path = '.Neutral_Tweets'
-            elif sentiment_polarity == 1:
-                root_path = '.Positive_Tweets'
-            self.redicclient.execute_command('JSON.ARRAPPEND', api_string + key, root_path, json.dumps(root_json_path))
-        except:
-            print(traceback.format_exc())
-            test_logger = self.get_logger('Redis Wrapper')
-            test_logger.error(traceback.format_exc())
+        if sentiment_polarity == -1:
+            root_path = '.Negative_Tweets'
+        elif sentiment_polarity == 0:
+            root_path = '.Neutral_Tweets'
+        elif sentiment_polarity == 1:
+            root_path = '.Positive_Tweets'
+        self.redicclient.execute_command('JSON.ARRAPPEND', api_string + key, root_path, json.dumps(root_json_path))
 
     def redis_get_json(self, api_string, key):
         return self.redicclient.execute_command('JSON.GET', api_string+key)
