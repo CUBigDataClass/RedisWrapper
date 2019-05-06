@@ -36,6 +36,18 @@ class RedisWrapper():
         except:
             has_lat_long = False
             lat_long_list = ['None', 'None']
+
+        if has_lat_long:
+            sentiment_value = float(tweet["Sentiment_Value"])
+            full_text = tweet["Text"]
+            root_json_path = {}
+            root_json_path["Latitude"] = lat_long_list[0]
+            root_json_path["Longitude"] = lat_long_list[1]
+            root_json_path["Tweet_Text"] = full_text
+            root_json_path["Sentiment_Value"] = sentiment_value
+            api_string = 'get_tweets_with_lat_long/'
+            self.redicclient.execute_command('JSON.ARRAPPEND', api_string+key, '.', json.dumps(root_json_path))
+
         sentiment_polarity = int(tweet["Sentiment_Polarity"])
         full_text = tweet["Text"]
         root_json_path = {}
@@ -43,10 +55,6 @@ class RedisWrapper():
         root_json_path["Longitude"] = lat_long_list[1]
         root_json_path["Tweet_Text"] = full_text
         root_json_path["Sentiment_Polarity"] = sentiment_polarity
-        if has_lat_long:
-            api_string = 'get_tweets_with_lat_long/'
-            self.redicclient.execute_command('JSON.ARRAPPEND', api_string+key, '.', json.dumps(root_json_path))
-
         api_string = 'get_polarity_tweets_of_stock/'
         if sentiment_polarity == -1:
             root_path = '.Negative_Tweets'
