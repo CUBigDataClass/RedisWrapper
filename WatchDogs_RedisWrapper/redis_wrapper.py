@@ -13,22 +13,15 @@ class RedisWrapper():
 
     def redis_update_json(self, api_string, key):
         if api_string == 'get_tweets_with_lat_long/':
-            try:
-                json_data = self.mng.get_tweets_with_lat_long(key)
-                self.redicclient.execute_command('JSON.SET', api_string+key, '.', json_data)
-            except:
-                print(traceback.format_exc())
-                test_logger = self.get_logger('Redis Wrapper')
-                test_logger.error(traceback.format_exc())
+
+            json_data = self.mng.get_tweets_with_lat_long(key)
+            self.redicclient.execute_command('JSON.SET', api_string+key, '.', json_data)
 
         elif api_string == 'get_polarity_tweets_of_stock/':
-            try:
-                json_data = self.mng.get_polarity_tweets_of_stock(key)
-                self.redicclient.execute_command('JSON.SET', api_string + key, '.', json_data)
-            except:
-                print(traceback.format_exc())
-                test_logger = self.get_logger('Redis Wrapper')
-                test_logger.error(traceback.format_exc())
+
+            json_data = self.mng.get_polarity_tweets_of_stock(key)
+            self.redicclient.execute_command('JSON.SET', api_string + key, '.', json_data)
+
 
     def redis_insert_tweet(self, key, tweet):
         """
