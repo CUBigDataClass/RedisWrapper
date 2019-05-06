@@ -4,9 +4,9 @@ import json
 import traceback
 
 class RedisWrapper():
-    def __init__(self):
+    def __init__(self, decrypt_key):
         self.redicclient = redis.StrictRedis(host='35.236.16.13', port=6379, db=0, decode_responses=True)
-        self.mng = MongoWrapper()
+        self.mng = MongoWrapper(decrypt_key)
 
     def get_logger(self, logger_name):
         return self.mng.get_logger(logger_name)
